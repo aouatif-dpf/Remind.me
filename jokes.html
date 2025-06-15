@@ -1,120 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Funny Jokes</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-br from-orange-100 via-pink-100 to-yellow-100 min-h-screen p-4">
-
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-4">
-    <button onclick="goBack()" class="text-gray-600 text-xl">←</button>
-    <h1 class="text-xl font-semibold text-gray-800">Funny jokes 😂</h1>
-    <button class="text-gray-400 text-lg">⋯</button>
-  </div>
-
-  <!-- Joke List -->
-  <div id="jokesContainer" class="space-y-6 mb-20"></div>
-
-  <!-- Ajouter une joke -->
-  <div id="addJokeSection" class="fixed bottom-20 left-0 right-0 px-4 hidden">
-    <div class="bg-white p-4 rounded-xl shadow-lg">
-      <input id="jokeTitle" placeholder="Titre de la blague" class="w-full mb-2 border rounded px-3 py-1 text-sm" />
-      <textarea id="jokeContent" rows="3" placeholder="Contenu de la blague" class="w-full border rounded px-3 py-1 text-sm"></textarea>
-      <button onclick="addJoke()" class="mt-3 bg-green-400 hover:bg-green-500 text-white px-4 py-1 rounded">Ajouter</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Funny Jokes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gradient-to-br from-orange-100 via-pink-100 to-yellow-100 min-h-screen p-4"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <button onclick="goBack()" class="text-gray-600 text-xl">←</button>
+      <h1 class="text-xl font-semibold text-gray-800">Funny jokes 😂</h1>
+      <button class="text-gray-400 text-lg">⋯</button>
     </div>
-  </div>
 
-  <!-- Footer Navigation -->
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex justify-around items-center">
-    <button onclick="window.location.href='home.html'" class="text-gray-500 hover:text-gray-700">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M3 9.5l9-7 9 7M4 10v10a1 1 0 001 1h5v-6h4v6h5a1 1 0 001-1V10" />
-      </svg>
-    </button>
-    <button onclick="toggleAddJoke()" class="bg-orange-300 hover:bg-orange-400 text-white p-3 rounded-full text-xl shadow-lg">
-      +
-    </button>
-    <button class="text-gray-500 hover:text-gray-700">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M12 6v6l4 2" />
-      </svg>
-    </button>
-  </div>
+    <!-- Joke List -->
+    <div id="jokesContainer" class="space-y-6 mb-20"></div>
 
-  <script>
-    const defaultJokes = [
-      { title: "Blague 1", content: "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau." },
-      { title: "Blague 2", content: "Que dit une imprimante dans l’eau ? J’ai papier !" },
-      { title: "Blague 3", content: "Pourquoi les poissons détestent Internet ? À cause du net." }
-    ];
+    <!-- Ajouter une joke -->
+    <div id="addJokeSection" class="fixed bottom-20 left-0 right-0 px-4 hidden">
+      <div class="bg-white p-4 rounded-xl shadow-lg">
+        <input
+          id="jokeTitle"
+          placeholder="Titre de la blague"
+          class="w-full mb-2 border rounded px-3 py-1 text-sm"
+        />
+        <textarea
+          id="jokeContent"
+          rows="3"
+          placeholder="Contenu de la blague"
+          class="w-full border rounded px-3 py-1 text-sm"
+        ></textarea>
+        <button
+          onclick="addJoke()"
+          class="mt-3 bg-green-400 hover:bg-green-500 text-white px-4 py-1 rounded"
+        >
+          Ajouter
+        </button>
+      </div>
+    </div>
 
-    function loadJokes() {
-      let jokes;
-      try {
-        jokes = JSON.parse(localStorage.getItem("jokes"));
-        if (!Array.isArray(jokes)) throw new Error();
-      } catch {
-        jokes = null;
+    <!-- Footer Navigation -->
+    <div
+      class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex justify-around items-center"
+    >
+      <button
+        onclick="window.location.href='home.html'"
+        class="text-gray-500 hover:text-gray-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 mx-auto"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            d="M3 9.5l9-7 9 7M4 10v10a1 1 0 001 1h5v-6h4v6h5a1 1 0 001-1V10"
+          />
+        </svg>
+      </button>
+      <button
+        onclick="toggleAddJoke()"
+        class="bg-orange-300 hover:bg-orange-400 text-white p-3 rounded-full text-xl shadow-lg"
+      >
+        +
+      </button>
+      <button class="text-gray-500 hover:text-gray-700">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 mx-auto"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path d="M12 6v6l4 2" />
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      function loadJokes() {
+        let jokes = [];
+
+        try {
+          jokes = JSON.parse(localStorage.getItem("jokes"));
+          if (!Array.isArray(jokes)) throw new Error();
+        } catch {
+          jokes = [];
+        }
+
+        // Si l'utilisateur n'a jamais rien ajouté, on insère les blagues par défaut
+        if (jokes.length === 0) {
+          jokes = defaultJokes;
+          localStorage.setItem("jokes", JSON.stringify(jokes));
+        } else if (jokes.length < defaultJokes.length) {
+          // Ajouter les blagues par défaut manquantes (pas de doublons)
+          defaultJokes.forEach((defaultJoke) => {
+            const exists = jokes.some(
+              (j) =>
+                j.title === defaultJoke.title &&
+                j.content === defaultJoke.content
+            );
+            if (!exists) {
+              jokes.push(defaultJoke);
+            }
+          });
+          localStorage.setItem("jokes", JSON.stringify(jokes));
+        }
+
+        // Affichage
+        const container = document.getElementById("jokesContainer");
+        container.innerHTML = "";
+
+        jokes.forEach((joke, index) => {
+          const card = document.createElement("div");
+          card.className = "bg-white p-4 rounded-xl shadow space-y-2 relative";
+
+          const title = document.createElement("h2");
+          title.className = "font-semibold text-lg text-orange-600";
+          title.textContent = joke.title;
+
+          const content = document.createElement("p");
+          content.className = "text-gray-700";
+          content.textContent = joke.content;
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "🗑️";
+          deleteBtn.className =
+            "absolute top-2 right-3 text-gray-400 hover:text-red-500";
+          deleteBtn.onclick = () => deleteJoke(index);
+
+          card.appendChild(title);
+          card.appendChild(content);
+          card.appendChild(deleteBtn);
+          container.appendChild(card);
+        });
       }
 
-      if (!jokes || jokes.length === 0) {
-        jokes = defaultJokes;
+      function deleteJoke(index) {
+        let jokes = JSON.parse(localStorage.getItem("jokes")) || [];
+        jokes.splice(index, 1);
         localStorage.setItem("jokes", JSON.stringify(jokes));
+        loadJokes();
       }
 
-      const container = document.getElementById("jokesContainer");
-      container.innerHTML = "";
+      const defaultJokes = [
+        {
+          title: "Blague 1",
+          content:
+            "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau.",
+        },
+        {
+          title: "Blague 2",
+          content: "Que dit une imprimante dans l’eau ? J’ai papier !",
+        },
+        {
+          title: "Blague 3",
+          content: "Pourquoi les poissons détestent Internet ? À cause du net.",
+        },
+      ];
 
-      jokes.forEach(joke => {
-        const card = document.createElement("div");
-        card.className = "bg-white p-4 rounded-xl shadow space-y-2";
+      function loadJokes() {
+        let jokes;
+        try {
+          jokes = JSON.parse(localStorage.getItem("jokes"));
+          if (!Array.isArray(jokes)) throw new Error();
+        } catch {
+          jokes = null;
+        }
 
-        const title = document.createElement("h2");
-        title.className = "font-semibold text-lg text-orange-600";
-        title.textContent = joke.title;
+        if (!jokes || jokes.length === 0) {
+          jokes = defaultJokes;
+          localStorage.setItem("jokes", JSON.stringify(jokes));
+        }
 
-        const content = document.createElement("p");
-        content.className = "text-gray-700";
-        content.textContent = joke.content;
+        const container = document.getElementById("jokesContainer");
+        container.innerHTML = "";
 
-        card.appendChild(title);
-        card.appendChild(content);
-        container.appendChild(card);
-      });
-    }
+        jokes.forEach((joke) => {
+          const card = document.createElement("div");
+          card.className = "bg-white p-4 rounded-xl shadow space-y-2";
 
-    function addJoke() {
-      const title = document.getElementById("jokeTitle").value.trim();
-      const content = document.getElementById("jokeContent").value.trim();
-      if (!title || !content) {
-        alert("Merci de remplir les deux champs.");
-        return;
+          const title = document.createElement("h2");
+          title.className = "font-semibold text-lg text-orange-600";
+          title.textContent = joke.title;
+
+          const content = document.createElement("p");
+          content.className = "text-gray-700";
+          content.textContent = joke.content;
+
+          card.appendChild(title);
+          card.appendChild(content);
+          container.appendChild(card);
+        });
       }
 
-      let jokes = JSON.parse(localStorage.getItem("jokes")) || [];
-      jokes.push({ title, content });
-      localStorage.setItem("jokes", JSON.stringify(jokes));
+      function addJoke() {
+        const title = document.getElementById("jokeTitle").value.trim();
+        const content = document.getElementById("jokeContent").value.trim();
+        if (!title || !content) {
+          alert("Merci de remplir les deux champs.");
+          return;
+        }
 
-      document.getElementById("jokeTitle").value = "";
-      document.getElementById("jokeContent").value = "";
-      document.getElementById("addJokeSection").classList.add("hidden");
+        let jokes = JSON.parse(localStorage.getItem("jokes")) || [];
+        jokes.push({ title, content });
+        localStorage.setItem("jokes", JSON.stringify(jokes));
 
-      loadJokes();
-    }
+        document.getElementById("jokeTitle").value = "";
+        document.getElementById("jokeContent").value = "";
+        document.getElementById("addJokeSection").classList.add("hidden");
 
-    function toggleAddJoke() {
-      document.getElementById("addJokeSection").classList.toggle("hidden");
-    }
+        loadJokes();
+      }
 
-    function goBack() {
-      window.location.href = "home.html";
-    }
+      function toggleAddJoke() {
+        document.getElementById("addJokeSection").classList.toggle("hidden");
+      }
 
-    // Exécution dès le chargement de la page
-    window.onload = loadJokes;
-  </script>
-</body>
+      function goBack() {
+        window.location.href = "home.html";
+      }
+
+      // Exécution dès le chargement de la page
+      window.onload = loadJokes;
+    </script>
+  </body>
 </html>
