@@ -45,9 +45,26 @@
   </div>
 
   <script>
-    // Charger les blagues
+    const defaultJokes = [
+      { title: "Blague 1", content: "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau." },
+      { title: "Blague 2", content: "Que dit une imprimante dans l’eau ? J’ai papier !" },
+      { title: "Blague 3", content: "Pourquoi les poissons détestent Internet ? À cause du net." }
+    ];
+
     function loadJokes() {
-      const jokes = JSON.parse(localStorage.getItem("jokes") || "[]");
+      let jokes;
+      try {
+        jokes = JSON.parse(localStorage.getItem("jokes"));
+        if (!Array.isArray(jokes)) throw new Error();
+      } catch {
+        jokes = null;
+      }
+
+      if (!jokes || jokes.length === 0) {
+        jokes = defaultJokes;
+        localStorage.setItem("jokes", JSON.stringify(jokes));
+      }
+
       const container = document.getElementById("jokesContainer");
       container.innerHTML = "";
 
@@ -69,7 +86,6 @@
       });
     }
 
-    // Ajouter une blague
     function addJoke() {
       const title = document.getElementById("jokeTitle").value.trim();
       const content = document.getElementById("jokeContent").value.trim();
@@ -78,7 +94,7 @@
         return;
       }
 
-      const jokes = JSON.parse(localStorage.getItem("jokes") || "[]");
+      let jokes = JSON.parse(localStorage.getItem("jokes")) || [];
       jokes.push({ title, content });
       localStorage.setItem("jokes", JSON.stringify(jokes));
 
@@ -97,8 +113,8 @@
       window.location.href = "home.html";
     }
 
-    // Initialiser
-    loadJokes();
+    // Exécution dès le chargement de la page
+    window.onload = loadJokes;
   </script>
 </body>
 </html>
