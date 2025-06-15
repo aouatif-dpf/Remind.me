@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remind.me - Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 min-h-screen p-4"
+  >
+    <div class="max-w-md mx-auto">
+      <!-- Barre de recherche -->
+      <input
+        type="text"
+        placeholder="Search note"
+        class="mb-4 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+      />
+
+      <!-- Onglets -->
+      <div
+        class="flex justify-between mb-4 text-sm font-semibold text-gray-600"
+      >
+        <span class="cursor-pointer border-b-2 border-gray-800 pb-1"
+          >Notes</span
+        >
+        <span class="cursor-pointer" onclick="window.location.href='list.html'"
+          >Lists</span
+        >
+        <span class="cursor-pointer" onclick="window.location.href='voice.html'"
+          >Recordings</span
+        >
+      </div>
+
+      <!-- Cartes de notes -->
+      <div class="grid grid-cols-2 gap-3">
+        <div
+          onclick="goTo('travel.html')"
+          class="bg-teal-200 p-4 rounded-xl shadow hover:scale-105 transition cursor-pointer"
+        >
+          Travel bucket list
+        </div>
+        <div
+          onclick="goTo('school-notes.html')"
+          class="bg-yellow-200 p-4 rounded-xl shadow hover:scale-105 transition cursor-pointer"
+        >
+          My school notes
+        </div>
+        <div class="bg-pink-200 p-4 rounded-xl shadow hover:scale-105 transition cursor-pointer" onclick="goTo('jokes.html')">Funny jokes</div>
+        <div
+          class="bg-gray-300 p-4 rounded-xl shadow hover:scale-105 transition cursor-pointer"
+          onclick="goTo('cook.html')"
+        >
+          Random cooking ideas
+        </div>
+        <div class="bg-orange-300 p-4 rounded-xl shadow">Albums to listen</div>
+      </div>
+
+      <!-- Bouton d’ajout -->
+      <div class="fixed bottom-6 right-6">
+        <button
+          onclick="goTo('add.html')"
+          class="bg-green-400 hover:bg-green-500 text-white rounded-full w-14 h-14 text-3xl shadow-lg"
+        >
+          +
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+    </script>
+  </body>
+</html>

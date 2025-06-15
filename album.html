@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Albums to Listen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white min-h-screen p-6 font-sans">
+    <div class="max-w-md mx-auto">
+
+      <!-- Top bar with Back and Title -->
+      <div class="flex items-center justify-between mb-6">
+        <button
+          onclick="goBack()"
+          class="text-teal-600 hover:text-white hover:bg-teal-500 border border-teal-400 px-3 py-1 rounded-xl transition"
+        >
+          ← Back
+        </button>
+        <h1 class="text-2xl font-semibold text-teal-700">🎵 Albums to Listen</h1>
+        <button
+          onclick="addAlbum()"
+          class="text-teal-600 hover:text-white hover:bg-teal-500 border border-teal-400 px-3 py-1 rounded-xl transition"
+        >
+          + Add
+        </button>
+      </div>
+
+      <!-- Album List -->
+      <ul id="albumList" class="space-y-4">
+        <li class="bg-green-100 p-4 rounded-xl shadow-sm flex justify-between items-center">
+          <span>Taylor Swift - Midnights</span>
+          <button onclick="removeAlbum(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </li>
+        <li class="bg-green-100 p-4 rounded-xl shadow-sm flex justify-between items-center">
+          <span>Daft Punk - Random Access Memories</span>
+          <button onclick="removeAlbum(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      function addAlbum() {
+        const name = prompt("Enter album name:");
+        if (name && name.trim() !== "") {
+          const li = document.createElement("li");
+          li.className =
+            "bg-green-100 p-4 rounded-xl shadow-sm flex justify-between items-center";
+          li.innerHTML = `<span>${name}</span><button onclick="removeAlbum(this)" class="text-red-500 hover:text-red-700">🗑</button>`;
+          document.getElementById("albumList").appendChild(li);
+        }
+      }
+
+      function removeAlbum(btn) {
+        btn.parentElement.remove();
+      }
+
+      function goBack() {
+        window.location.href = "home.html"; // Changez selon le nom de votre page d'accueil
+      }
+    </script>
+  </body>
+</html>

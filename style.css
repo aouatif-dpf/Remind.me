@@ -1,0 +1,84 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+}
+
+/* Login Page */
+.login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  width: 300px;
+  text-align: center;
+}
+
+.login-container input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 1em;
+}
+
+.login-container button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #45a049;
+}
+
+/* Notes Page */
+header {
+  background-color: #4CAF50;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+}
+
+.note-types-container {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.note-column {
+  background: white;
+  padding: 1rem;
+  flex: 1 1 30%;
+  min-width: 250px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.note-column h2 {
+  margin-top: 0;
+  color: #4CAF50;
+}
+
+.note-column textarea {
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add a Note - Remind.me</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 min-h-screen p-6">
+  <div class="max-w-md mx-auto">
+    <!-- Titre -->
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Choose Note Type</h1>
+
+    <!-- Cartes -->
+    <div class="grid grid-cols-2 gap-4">
+      <div onclick="goTo('simple.html')" class="bg-white rounded-xl shadow-md p-6 text-center cursor-pointer hover:bg-green-100 transition">
+        📝<br>
+        <span class="block mt-2 font-medium">Simple Note</span>
+      </div>
+      <div onclick="goTo('list.html')" class="bg-white rounded-xl shadow-md p-6 text-center cursor-pointer hover:bg-yellow-100 transition">
+        ✅<br>
+        <span class="block mt-2 font-medium">List</span>
+      </div>
+      <div onclick="goTo('voice.html')" class="bg-white rounded-xl shadow-md p-6 text-center cursor-pointer hover:bg-blue-100 transition">
+        🎤<br>
+        <span class="block mt-2 font-medium">Voice</span>
+      </div>
+      <div onclick="goTo('sketch.html')" class="bg-white rounded-xl shadow-md p-6 text-center cursor-pointer hover:bg-pink-100 transition">
+        🎨<br>
+        <span class="block mt-2 font-medium">Sketch</span>
+      </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="mt-6">
+      <button onclick="goBack()" class="text-sm text-gray-600 underline">← Back to Home</button>
+    </div>
+  </div>
+
+  <script>
+    function goTo(page) {
+      window.location.href = page;
+    }
+
+    function goBack() {
+      window.location.href = 'home.html';
+    }
+  </script>
+</body>
+</html>

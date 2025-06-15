@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>School Notes - Prise de notes scolaire</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-indigo-200 min-h-screen p-6 font-sans">
+
+  <header class="mb-6">
+    <h1 class="text-4xl font-bold text-center text-indigo-800 mb-2">School Notes</h1>
+    <p class="text-center text-indigo-600">Organisez vos notes par catégorie, ajoutez des images et gérez facilement vos idées.</p>
+  </header>
+
+  <main class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+
+    <!-- Gestion catégories -->
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Catégories</h2>
+      <div class="flex gap-4 mb-3">
+        <input id="newCategoryInput" type="text" placeholder="Nouvelle catégorie" class="border border-indigo-300 rounded px-3 py-2 flex-grow" />
+        <button id="addCategoryBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Ajouter</button>
+      </div>
+      <ul id="categoriesList" class="flex flex-wrap gap-2">
+        <!-- Catégories générées ici -->
+      </ul>
+    </section>
+
+    <hr class="my-6" />
+
+    <!-- Liste notes -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-2">Notes</h2>
+
+      <button id="addNoteBtn" class="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">+ Ajouter une note</button>
+
+      <ul id="notesList" class="space-y-4">
+        <!-- Notes générées ici -->
+      </ul>
+    </section>
+  </main>
+
+  <!-- Modal ajout/édition note -->
+  <div id="noteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg max-w-3xl w-full p-6 relative shadow-lg">
+      <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+      <h3 id="modalTitle" class="text-xl font-semibold mb-4">Ajouter une note</h3>
+
+      <form id="noteForm" class="space-y-4">
+
+        <input type="text" id="noteTitle" placeholder="Titre de la note" class="w-full border border-indigo-300 rounded px-3 py-2" required />
+
+        <select id="noteCategory" class="w-full border border-indigo-300 rounded px-3 py-2" required>
+          <!-- Options catégories -->
+        </select>
+
+        <textarea id="noteContent" rows="6" placeholder="Contenu de la note..." class="w-full border border-indigo-300 rounded px-3 py-2 resize-y" required></textarea>
+
+        <div>
+          <label for="noteImageInput" class="block mb-1 font-medium">Ajouter une image (optionnel)</label>
+          <input type="file" id="noteImageInput" accept="image/*" />
+          <div id="imagePreview" class="mt-3"></div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+          <button type="button" id="deleteNoteBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition hidden">Supprimer</button>
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Enregistrer</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Stockage en localStorage
+    const STORAGE_KEYS = {
+      CATEGORIES: 'schoolNotesCategories',
+      NOTES: 'schoolNotesNotes'
+    };
+
+    // Etat de l'application
+    let categories = [];
+    let notes = [];
+
+    // Edition note en cours (null si nouvelle note)
+    let editingNoteId = null;
+
+    // DOM Elements
+    const categoriesList = document.getElementById('categoriesList');
+    const notesList = document.getElementById('notesList');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const newCategoryInput = document.getElementById('newCategoryInput');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    const noteModal = document.getElementById('noteModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const noteForm = document.getElementById('noteForm');
+    const noteTitle = document.getElementById('noteTitle');
+    const noteCategory = document.getElementById('noteCategory');
+    const noteContent = document.getElementById('noteContent');
+    const noteImageInput = document.getElementById('noteImageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const modalTitle = document.getElementById('modalTitle');
+    const deleteNoteBtn = document.getElementById('deleteNoteBtn');
+
+    // Chargement des données
+    function loadData() {
+      const savedCats = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
+      categories = savedCats ? JSON.parse(savedCats) : ['Général'];
+
+      const savedNotes = localStorage.getItem(STORAGE_KEYS.NOTES);
+      notes = savedNotes ? JSON.parse(savedNotes) : [];
+    }
+
+    // Sauvegarde des données
+    function saveData() {
+      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+      localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(notes));
+    }
+
+    // Rendu des catégories dans liste et select
+    function renderCategories() {
+      // Liste catégories
+      categoriesList.innerHTML = '';
+      categories.forEach((cat, i) => {
+        const li = document.createElement('li');
+        li.className = 'bg-indigo-100 text-indigo-800 rounded px-3 py-1 cursor-pointer flex items-center gap-2';
+
+        li.textContent = cat;
+
+        // Modifier nom catégorie au clic
+        li.addEventListener('dblclick', () => {
+          const newName = prompt('Modifier le nom de la catégorie:', cat);
+          if (newName && newName.trim() && !categories.includes(newName.trim())) {
+            categories[i] = newName.trim();
+            saveData();
+            renderCategories();
+            renderNotes();
+          } else if (newName && categories.includes(newName.trim())) {
+            alert('Cette catégorie existe déjà.');
+          }
+        });
+
+        // Supprimer catégorie au clic droit
+        li.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          if (cat === 'Général') {
+            alert('La catégorie "Général" ne peut pas être supprimée.');
+            return;
+          }
+          if (confirm(`Supprimer la catégorie "${cat}" et toutes ses notes ?`)) {
+            // Supprimer notes associées
+            notes = notes.filter(note => note.category !== cat);
+            // Supprimer catégorie
+            categories.splice(i, 1);
+            saveData();
+            renderCategories();
+            renderNotes();
+          }
+        });
+
+        categoriesList.appendChild(li);
+      });
+
+      // Options select catégorie pour notes
+      noteCategory.innerHTML = '';
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        noteCategory.appendChild(option);
+      });
+    }
+
+    // Rendu de la liste des notes
+    function renderNotes() {
+      if (notes.length === 0) {
+        notesList.innerHTML = '<p class="text-gray-500 italic">Aucune note pour le moment.</p>';
+        return;
+      }
+
+      notesList.innerHTML = '';
+      notes.forEach(note => {
+        const li = document.createElement('li');
+        li.className = 'border border-indigo-300 rounded p-4 shadow-sm bg-indigo-50 flex justify-between items-start gap-4';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flex-grow cursor-pointer';
+        // Affiche titre + catégorie + extrait contenu
+        infoDiv.innerHTML = `
+          <h3 class="text-lg font-semibold text-indigo-900">${note.title}</h3>
+          <p class="text-sm text-indigo-700 italic">Catégorie : ${note.category}</p>
+          <p class="mt-2 text-indigo-800">${note.content.length > 120 ? note.content.substring(0, 120) + '...' : note.content}</p>
+          ${note.image ? `<img src="${note.image}" alt="Image note" class="mt-2 max-h-40 rounded shadow-sm" />` : ''}
+        `;
+
+        infoDiv.addEventListener('click', () => {
+          openEditNoteModal(note.id);
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-600 hover:text-red-800 font-bold';
+        deleteBtn.textContent = 'Supprimer';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('Supprimer cette note ?')) {
+            deleteNote(note.id);
+          }
+        });
+
+        li.appendChild(infoDiv);
+        li.appendChild(deleteBtn);
+
+        notesList.appendChild(li);
+      });
+    }
+
+    // Ajouter catégorie
+    addCategoryBtn.addEventListener('click', () => {
+      const newCat = newCategoryInput.value.trim();
+      if (!newCat) return alert('Veuillez saisir un nom de catégorie.');
+      if (categories.includes(newCat)) return alert('Cette catégorie existe déjà.');
+
+      categories.push(newCat);
+      newCategoryInput.value = '';
+      saveData();
+      renderCategories();
+    });
+
+    // Ouvrir modal ajout note
+    addNoteBtn.addEventListener('click', () => {
+      editingNoteId = null;
+      modalTitle.textContent = 'Ajouter une note';
+      deleteNoteBtn.style.display = 'none';
+
+      noteForm.reset();
+      imagePreview.innerHTML = '';
+      noteModal.classList.remove('hidden');
+      noteCategory.value = categories[0];
+    });
+
+    // Fermer modal
+    closeModalBtn.addEventListener('click', () => {
+      noteModal.classList.add('hidden');
+    });
+
+    // Ajouter/éditer image preview
+    noteImageInput.addEventListener('change', () => {
+      const file = noteImageInput.files[0];
+      if (!file) {
+        imagePreview.innerHTML = '';
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert('Veuillez choisir un fichier image valide.');
+        noteImageInput.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview image" class="max-h-48 rounded shadow" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Soumettre formulaire note
+    noteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const title = noteTitle.value.trim();
+      const category = noteCategory.value;
+      const content = noteContent.value.trim();
+
+      if (!title || !category || !content) {
+        alert('Veuillez remplir tous les champs.');
+        return;
+      }
+
+      // Gérer image base64
+      if (noteImageInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          saveNote(title, category, content, e.target.result);
+        };
+        reader.readAsDataURL(noteImageInput.files[0]);
+      } else {
+        saveNote(title, category, content, null);
+      }
+    });
+
+    // Sauvegarder note (ajout ou édition)
+    function saveNote(title, category, content, imageBase64) {
+      if (editingNoteId) {
+        // Modifier note
+        const idx = notes.findIndex(n => n.id === editingNoteId);
+        if (idx !== -1) {
+          notes[idx].title = title;
+          notes[idx].category = category;
+          notes[idx].content = content;
+          notes[idx].image = imageBase64;
+        }
+      } else {
+        // Ajouter nouvelle note
+        notes.push({
+          id: Date.now().toString(),
+          title,
+          category,
+          content,
+          image: imageBase64
+        });
+      }
+      saveData();
+      renderNotes();
+      noteModal.classList.add('hidden');
+    }
+
+    // Ouvrir modal édition note
+    function openEditNoteModal(noteId) {
+      const note = notes.find(n => n.id === noteId);
+      if (!note) return;
+
+      editingNoteId = noteId;
+      modalTitle.textContent = 'Modifier la note';
+      deleteNoteBtn.style.display = 'inline-block';
+
+      noteTitle.value = note.title;
+      noteCategory.value = note.category;
+      noteContent.value = note.content;
+
+      if (note.image) {
+        imagePreview.innerHTML = `<img src="${note.image}" alt="Image note" class="max-h-48 rounded shadow" />`;
+      } else {
+        imagePreview.innerHTML = '';
+      }
+
+      noteImageInput.value = '';
+      noteModal.classList.remove('hidden');
+    }
+
+    // Supprimer note
+    deleteNoteBtn.addEventListener('click', () => {
+      if (!editingNoteId) return;
+      if (confirm('Voulez-vous vraiment supprimer cette note ?')) {
+        deleteNote(editingNoteId);
+        noteModal.classList.add('hidden');
+      }
+    });
+
+    function deleteNote(noteId) {
+      notes = notes.filter(n => n.id !== noteId);
+      saveData();
+      renderNotes();
+    }
+
+    // Initialisation
+    function init() {
+      loadData();
+      renderCategories();
+      renderNotes();
+    }
+
+    init();
+
+  </script>
+
+</body>
+</html>

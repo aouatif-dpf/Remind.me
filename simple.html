@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Note</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 min-h-screen p-6">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">✍️ Simple Note</h2>
+    <textarea id="note" rows="10" class="w-full border rounded-lg p-3 focus:outline-none resize-none" placeholder="Write your note here..."></textarea>
+    <button onclick="saveNote()" class="mt-4 bg-green-400 hover:bg-green-500 text-white py-2 px-6 rounded-lg">Save</button>
+    <p id="status" class="text-sm text-gray-600 mt-2"></p>
+    <button onclick="goBack()" class="text-sm mt-6 underline text-gray-600">← Back</button>
+  </div>
+
+  <!-- Conteneur historique des notes -->
+  <div id="historyContainer" class="max-w-md mx-auto mt-8 space-y-4"></div>
+
+  <script>
+    // Sauvegarde une nouvelle note dans un tableau dans localStorage
+    function saveNote() {
+      const content = document.getElementById('note').value.trim();
+      if (!content) {
+        alert('Note is empty.');
+        return;
+      }
+
+      let notes = JSON.parse(localStorage.getItem('simpleNotes')) || [];
+
+      const newNote = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        content: content,
+      };
+
+      notes.push(newNote);
+      localStorage.setItem('simpleNotes', JSON.stringify(notes));
+      document.getElementById('status').textContent = 'Note saved!';
+
+      displayHistory();
+      // Effacer la zone de texte après sauvegarde (optionnel)
+      document.getElementById('note').value = '';
+    }
+
+    // Affiche l'historique des notes sauvegardées
+    function displayHistory() {
+      const container = document.getElementById('historyContainer');
+      container.innerHTML = '';
+
+      let notes = JSON.parse(localStorage.getItem('simpleNotes')) || [];
+      // Trier par date décroissante
+      notes.sort((a, b) => b.id - a.id);
+
+      if(notes.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-500">No saved notes.</p>';
+        return;
+      }
+
+      notes.forEach(note => {
+        const div = document.createElement('div');
+        div.className = "border p-3 rounded bg-gray-50 shadow-sm";
+
+        const contentP = document.createElement('p');
+        contentP.className = "whitespace-pre-wrap text-gray-800";
+        contentP.textContent = note.content;
+
+        const infoP = document.createElement('p');
+        infoP.className = "text-xs text-gray-600 mt-1";
+        infoP.textContent = `Created: ${new Date(note.date).toLocaleString()}`;
+
+        // Boutons charger & supprimer
+        const btnContainer = document.createElement('div');
+        btnContainer.className = "mt-2 flex space-x-2";
+
+        const loadBtn = document.createElement('button');
+        loadBtn.textContent = 'Load';
+        loadBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs';
+        loadBtn.onclick = () => loadNote(note.content);
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.className = 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs';
+        delBtn.onclick = () => deleteNote(note.id);
+
+        btnContainer.appendChild(loadBtn);
+        btnContainer.appendChild(delBtn);
+
+        div.appendChild(contentP);
+        div.appendChild(infoP);
+        div.appendChild(btnContainer);
+
+        container.appendChild(div);
+      });
+    }
+
+    // Charge le contenu d'une note dans la textarea
+    function loadNote(content) {
+      document.getElementById('note').value = content;
+      document.getElementById('status').textContent = 'Note loaded!';
+    }
+
+    // Supprime une note de l'historique
+    function deleteNote(id) {
+      let notes = JSON.parse(localStorage.getItem('simpleNotes')) || [];
+      notes = notes.filter(note => note.id !== id);
+      localStorage.setItem('simpleNotes', JSON.stringify(notes));
+      displayHistory();
+      document.getElementById('status').textContent = 'Note deleted.';
+    }
+
+    // Charger la dernière note au démarrage (optionnel)
+    window.onload = () => {
+      let notes = JSON.parse(localStorage.getItem('simpleNotes')) || [];
+      if(notes.length > 0) {
+        document.getElementById('note').value = notes[notes.length -1].content;
+      }
+      displayHistory();
+    };
+
+    function goBack() {
+      window.location.href = 'home.html';
+    }
+  </script>
+</body>
+</html>

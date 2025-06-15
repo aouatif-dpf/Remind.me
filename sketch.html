@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sketch Note</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      canvas {
+        border: 1px solid #ccc;
+        background: white;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 min-h-screen p-6"
+  >
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-xl p-4">
+      <h2 class="text-xl font-semibold mb-4">🎨 Sketch Note</h2>
+      <canvas
+        id="canvas"
+        width="300"
+        height="300"
+        class="mx-auto mb-4 rounded"
+      ></canvas>
+      <div class="flex justify-center space-x-4">
+        <button
+          onclick="clearCanvas()"
+          class="bg-red-400 hover:bg-red-500 text-white px-4 py-1 rounded-lg"
+        >
+          Clear
+        </button>
+        <button
+          onclick="saveSketch()"
+          class="bg-green-400 hover:bg-green-500 text-white px-4 py-1 rounded-lg"
+        >
+          Save
+        </button>
+      </div>
+      <p class="text-sm mt-4 text-gray-600" id="savedMessage"></p>
+      <button onclick="goBack()" class="text-sm mt-6 underline text-gray-600">
+        ← Back
+      </button>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      let drawing = false;
+
+      canvas.addEventListener("mousedown", (e) => {
+        drawing = true;
+        ctx.beginPath();
+        const rect = canvas.getBoundingClientRect();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      });
+
+      canvas.addEventListener("mouseup", () => (drawing = false));
+      canvas.addEventListener("mouseleave", () => (drawing = false));
+
+      canvas.addEventListener("mousemove", draw);
+
+      function draw(e) {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "black";
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      }
+
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById("savedMessage").textContent = "";
+      }
+
+      function saveSketch() {
+        const dataURL = canvas.toDataURL();
+        let sketches = JSON.parse(localStorage.getItem("sketches")) || [];
+
+        const newNote = {
+          id: Date.now(),
+          date: new Date().toISOString(),
+          image: dataURL,
+        };
+
+        sketches.push(newNote);
+        localStorage.setItem("sketches", JSON.stringify(sketches));
+        document.getElementById("savedMessage").textContent = "Sketch saved!";
+
+        displayHistory();
+      }
+
+      function displayHistory() {
+        const historyContainerId = "historyContainer";
+        let container = document.getElementById(historyContainerId);
+        if (!container) {
+          container = document.createElement("div");
+          container.id = historyContainerId;
+          container.className =
+            "mt-6 space-y-4 max-h-48 overflow-y-auto max-w-md mx-auto";
+          document.body.appendChild(container);
+        }
+        container.innerHTML = "";
+
+        let sketches = JSON.parse(localStorage.getItem("sketches")) || [];
+        sketches.sort((a, b) => b.id - a.id);
+
+        sketches.forEach((note) => {
+          const div = document.createElement("div");
+          div.className =
+            "border p-2 rounded flex items-center space-x-3 bg-gray-50 shadow-sm";
+
+          const img = document.createElement("img");
+          img.src = note.image;
+          img.alt = "Sketch note";
+          img.className = "w-16 h-16 rounded border";
+
+          const info = document.createElement("div");
+          info.innerHTML = `<p class="text-xs text-gray-600">Created: ${new Date(
+            note.date
+          ).toLocaleString()}</p>`;
+
+          const loadBtn = document.createElement("button");
+          loadBtn.textContent = "Load";
+          loadBtn.className =
+            "ml-auto bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs";
+          loadBtn.onclick = () => loadSketch(note.image);
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.className =
+            "bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs ml-2";
+          delBtn.onclick = () => deleteSketch(note.id);
+
+          div.appendChild(img);
+          div.appendChild(info);
+          div.appendChild(loadBtn);
+          div.appendChild(delBtn);
+          container.appendChild(div);
+        });
+      }
+
+      function loadSketch(dataURL) {
+        const img = new Image();
+        img.onload = () => {
+          clearCanvas();
+          ctx.drawImage(img, 0, 0);
+          document.getElementById("savedMessage").textContent =
+            "Sketch loaded!";
+        };
+        img.src = dataURL;
+      }
+
+      function deleteSketch(id) {
+        let sketches = JSON.parse(localStorage.getItem("sketches")) || [];
+        sketches = sketches.filter((note) => note.id !== id);
+        localStorage.setItem("sketches", JSON.stringify(sketches));
+        displayHistory();
+        document.getElementById("savedMessage").textContent = "Sketch deleted.";
+      }
+
+      // Charge la dernière note automatiquement
+      let sketches = JSON.parse(localStorage.getItem("sketches")) || [];
+      if (sketches.length > 0) {
+        const lastNote = sketches[sketches.length - 1];
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = lastNote.image;
+      }
+
+      displayHistory();
+
+      function goBack() {
+        window.location.href = "home.html";
+      }
+    </script>
+  </body>
+</html>

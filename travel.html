@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Travel Bucket List</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 min-h-screen p-6">
+  <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6">
+
+    <!-- Header with Back button -->
+    <div class="flex justify-between items-center mb-6">
+      <button onclick="goBack()" class="text-teal-600 hover:text-white hover:bg-teal-500 border border-teal-400 px-3 py-1 rounded-xl transition">← Back</button>
+      <h2 class="text-2xl font-semibold text-gray-800">🌍 Travel Bucket List</h2>
+      <div></div>
+    </div>
+
+    <!-- Destinations -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-medium text-gray-700">Destinations</h3>
+        <button onclick="addDestination()" class="text-sm text-blue-500 underline">+ Add</button>
+      </div>
+      <div id="destinations" class="space-y-2">
+        <div class="bg-teal-100 p-3 rounded-lg shadow-sm flex justify-between items-center">
+          <span>📍 Aarhus</span>
+          <button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </div>
+        <div class="bg-teal-100 p-3 rounded-lg shadow-sm flex justify-between items-center">
+          <span>📍 Billund</span>
+          <button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-medium text-gray-700">Checklist</h3>
+        <button onclick="addChecklistItem()" class="text-sm text-blue-500 underline">+ Add</button>
+      </div>
+      <ul id="checklist" class="space-y-2 text-gray-700">
+        <li class="flex items-center justify-between">
+          <div><input type="checkbox" class="mr-2" checked /> Find a cat sitter</div>
+          <button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </li>
+        <li class="flex items-center justify-between">
+          <div><input type="checkbox" class="mr-2" checked /> Travel insurance</div>
+          <button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Useful links -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-medium text-gray-700">Useful Links</h3>
+        <button onclick="addLink()" class="text-sm text-blue-500 underline">+ Add</button>
+      </div>
+      <ul id="links" class="space-y-2 text-blue-600 underline">
+        <li class="flex justify-between items-center">
+          <a href="https://www.travelsite.dk" target="_blank">www.travelsite.dk</a>
+          <button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function goBack() {
+      window.location.href = 'home.html'; // Modifiez selon le nom de votre page d’accueil
+    }
+
+    function removeItem(btn) {
+      btn.parentElement.remove();
+    }
+
+    function addDestination() {
+      const name = prompt("Enter destination:");
+      if (name) {
+        const el = document.createElement('div');
+        el.className = 'bg-teal-100 p-3 rounded-lg shadow-sm flex justify-between items-center';
+        el.innerHTML = `<span>📍 ${name}</span><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>`;
+        document.getElementById('destinations').appendChild(el);
+      }
+    }
+
+    function addChecklistItem() {
+      const task = prompt("New checklist item:");
+      if (task) {
+        const li = document.createElement('li');
+        li.className = "flex items-center justify-between";
+        li.innerHTML = `<div><input type="checkbox" class="mr-2" /> ${task}</div><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>`;
+        document.getElementById('checklist').appendChild(li);
+      }
+    }
+
+    function addLink() {
+      const url = prompt("Enter URL (e.g., https://example.com):");
+      if (url) {
+        const li = document.createElement('li');
+        li.className = "flex justify-between items-center";
+        li.innerHTML = `<a href="${url}" target="_blank">${url}</a><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700">🗑</button>`;
+        document.getElementById('links').appendChild(li);
+      }
+    }
+  </script>
+</body>
+</html>
