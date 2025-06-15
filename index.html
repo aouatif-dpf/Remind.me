@@ -64,6 +64,10 @@
           return;
         }
 
+        // Stocker email et mot de passe (attention : en clair, ce n'est pas sécurisé)
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPass", pass);
+
         // Redirection vers la page d’accueil
         window.location.href = "home.html";
       }
